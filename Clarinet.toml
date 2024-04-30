@@ -5,8 +5,60 @@ authors = []
 telemetry = true
 cache_dir = './.cache'
 requirements = []
+[contracts.asset-manager]
+path = 'contracts/asset-manager/asset-manager.clar'
+clarity_version = 2
+epoch = 2.4
 
-[contracts]
+[contracts.asset-manager-messages]
+path = 'contracts/asset-manager/messages.clar'
+clarity_version = 2
+epoch = 2.4
+
+[contracts.bnusd]
+path = 'contracts/bnusd/bnusd.clar'
+clarity_version = 2
+epoch = 2.4
+
+[contracts.bnusd-messages]
+path = 'contracts/bnusd/messages.clar'
+clarity_version = 2
+epoch = 2.4
+
+[contracts.oracle-proxy]
+path = 'contracts/oracle-proxy/oracle-proxy.clar'
+clarity_version = 2
+epoch = 2.4
+
+[contracts.oracle-proxy-messages]
+path = 'contracts/oracle-proxy/messages.clar'
+clarity_version = 2
+epoch = 2.4
+
+[contracts.rlp-decode]
+path = 'lib/rlp/rlp-decode.clar'
+clarity_version = 2
+epoch = 2.4
+
+[contracts.rlp-encode]
+path = 'lib/rlp/rlp-encode.clar'
+clarity_version = 2
+epoch = 2.4
+
+[contracts.sip-010-trait]
+path = 'lib/sips/sip-010-trait.clar'
+clarity_version = 2
+epoch = 2.4
+
+[contracts.xcall-manager]
+path = 'contracts/xcall-manager/xcall-manager.clar'
+clarity_version = 2
+epoch = 2.4
+
+[contracts.xcall-manager-messages]
+path = 'contracts/xcall-manager/messages.clar'
+clarity_version = 2
+epoch = 2.4
 
 [repl]
 clarity_wasm_mode = false

@@ -15,12 +15,12 @@ describe('asset-manager', () => {
   const xCallManager = Cl.contractPrincipal(deployer || DEPLOYER_DEVNET_STX_ADDRESS, 'xCallManager');
   // const token = Cl.contractPrincipal(deployer || DEPLOYER_DEVNET_STX_ADDRESS, 'token');
 
-  it('allows the contract owner to initialize the vault', () => {
-    const { result } = simnet.callPublicFn(assetManager, 'initialize', [
-      xCall,
-      Cl.stringAscii('icon-asset-manager'),
-      xCallManager
-    ], user);
+  // it('allows the contract owner to initialize the vault', () => {
+  //   const { result } = simnet.callPublicFn(assetManager, 'initialize', [
+  //     xCall,
+  //     Cl.stringAscii('icon-asset-manager'),
+  //     xCallManager
+  //   ], user);
     
   //   expect(result).toBeOk(Cl.bool(true));
   // });
