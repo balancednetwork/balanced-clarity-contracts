@@ -1,11 +1,10 @@
-
 ;; title: asset-manager
 ;; version:
 ;; summary:
 ;; description:
 
 ;; traits
-(use-trait ft-trait 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.sip-010-trait.sip-010-trait)
+(use-trait ft-trait .sip-010-trait.sip-010-trait)
 ;;
 
 ;; token definitions
