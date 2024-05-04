@@ -39,7 +39,7 @@
     (map-set period { token: (contract-of token) } { period: new-period })
     (map-set percentage { token: (contract-of token) } { percentage: new-percentage })
     (map-set last-update { token: (contract-of token) } { last-update: block-height })
-    (let ((balance (unwrap-panic (get-balance token))))
+    (let ((balance (unwrap! (get-balance token) ERR_INVALID_AMOUNT)))
       (map-set current-limit { token: (contract-of token) } { current-limit: (/ (* balance new-percentage) POINTS) }))
     (ok true)
   )
@@ -86,7 +86,7 @@
 (define-private (get-balance (token <ft-trait>))
   (if (is-eq token 'ST000000000000000000002AMW42H.nativetoken)
       (ok (stx-get-balance (as-contract tx-sender)))
-      (ok (unwrap-panic (contract-call? token get-balance (as-contract tx-sender))))
+      (ok (unwrap! (contract-call? token get-balance (as-contract tx-sender)) ERR_INVALID_AMOUNT))
   )
 )
 
