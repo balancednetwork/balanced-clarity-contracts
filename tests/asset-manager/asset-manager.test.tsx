@@ -104,12 +104,12 @@ describe("asset-manager", () => {
       [token, Cl.uint(initialAmount)],
       user
     );
-    // simnet.callPublicFn(
-    //   assetManager.contractName.content,
-    //   "configure-rate-limit",
-    //   [token, Cl.uint(10000), Cl.uint(initialPercentage)],
-    //   deployer!
-    // );
+    simnet.callPublicFn(
+      assetManager.contractName.content,
+      "configure-rate-limit",
+      [token, Cl.uint(10000), Cl.uint(initialPercentage)],
+      deployer!
+    );
   
     // Reset the withdrawal limit
     const { result: resetResult } = simnet.callPublicFn(
@@ -131,81 +131,81 @@ describe("asset-manager", () => {
     expect(limitResult).toBeUint(expectedLimit);
   });
 
-  // it("allows withdrawal when limit is not exceeded", () => {
-  //   const token = Cl.contractPrincipal(deployer!, "sbtc");
-  //   const amount = 1000;
-  //   const withdrawalAmount = 900;
-  //   const newPeriod = 10000;
-  //   const newPercentage = 9000;
-  //   const allowedWithdrawal = (amount * newPercentage) / 10000;
+  it("allows withdrawal when limit is not exceeded", () => {
+    const token = Cl.contractPrincipal(deployer!, "sbtc");
+    const amount = 1000;
+    const withdrawalAmount = 900;
+    const newPeriod = 10000;
+    const newPercentage = 9000;
+    const allowedWithdrawal = (amount * newPercentage) / 10000;
 
-  //   expect(withdrawalAmount).toBeLessThanOrEqual(allowedWithdrawal);
+    expect(withdrawalAmount).toBeLessThanOrEqual(allowedWithdrawal);
 
-  //   simnet.callPublicFn(
-  //     token.contractName.content,
-  //     "mint",
-  //     [Cl.uint(amount), Cl.address(user)],
-  //     deployer!
-  //   );
+    simnet.callPublicFn(
+      token.contractName.content,
+      "mint",
+      [Cl.uint(amount), Cl.address(user)],
+      deployer!
+    );
 
-  //   simnet.callPublicFn(
-  //     assetManager.contractName.content,
-  //     "deposit",
-  //     [token, Cl.uint(amount)],
-  //     user
-  //   );
+    simnet.callPublicFn(
+      assetManager.contractName.content,
+      "deposit",
+      [token, Cl.uint(amount)],
+      user
+    );
 
-  //   simnet.callPublicFn(
-  //     assetManager.contractName.content,
-  //     "configure-rate-limit",
-  //     [token, Cl.uint(newPeriod), Cl.uint(newPercentage)],
-  //     deployer!
-  //   );
+    simnet.callPublicFn(
+      assetManager.contractName.content,
+      "configure-rate-limit",
+      [token, Cl.uint(newPeriod), Cl.uint(newPercentage)],
+      deployer!
+    );
 
-  //   simnet.mineBlock([]);
+    simnet.mineBlock([]);
 
-  //   const { result } = simnet.callPublicFn(
-  //     assetManager.contractName.content,
-  //     "withdraw",
-  //     [token, Cl.uint(withdrawalAmount), Cl.address(user)],
-  //     user
-  //   );
+    const { result } = simnet.callPublicFn(
+      assetManager.contractName.content,
+      "withdraw",
+      [token, Cl.uint(withdrawalAmount), Cl.address(user)],
+      user
+    );
 
-  //   expect(result).toBeOk(Cl.bool(true));
-  // });
+    expect(result).toBeOk(Cl.bool(true));
+  });
 
-  // it("does not allow withdrawal exceeding limit", () => {
-  //   const token = Cl.contractPrincipal(deployer!, "sbtc");
-  //   const amount = 1000;
-  //   const withdrawalAmount = 901;
+  it("does not allow withdrawal exceeding limit", () => {
+    const token = Cl.contractPrincipal(deployer!, "sbtc");
+    const amount = 1000;
+    const withdrawalAmount = 901;
 
-  //   simnet.callPublicFn(
-  //     token.contractName.content,
-  //     "mint",
-  //     [Cl.uint(amount), Cl.address(user)],
-  //     deployer!
-  //   );
+    simnet.callPublicFn(
+      token.contractName.content,
+      "mint",
+      [Cl.uint(amount), Cl.address(user)],
+      deployer!
+    );
 
-  //   simnet.callPublicFn(
-  //     assetManager.contractName.content,
-  //     "deposit",
-  //     [token, Cl.uint(amount)],
-  //     user
-  //   );
-  //   simnet.callPublicFn(
-  //     assetManager.contractName.content,
-  //     "configure-rate-limit",
-  //     [token, Cl.uint(10000), Cl.uint(9000)],
-  //     deployer!
-  //   );
+    simnet.callPublicFn(
+      assetManager.contractName.content,
+      "deposit",
+      [token, Cl.uint(amount)],
+      user
+    );
+    simnet.callPublicFn(
+      assetManager.contractName.content,
+      "configure-rate-limit",
+      [token, Cl.uint(10000), Cl.uint(9000)],
+      deployer!
+    );
 
-  //   const { result } = simnet.callPublicFn(
-  //     assetManager.contractName.content,
-  //     "withdraw",
-  //     [token, Cl.uint(withdrawalAmount), Cl.address(user)],
-  //     user
-  //   );
+    const { result } = simnet.callPublicFn(
+      assetManager.contractName.content,
+      "withdraw",
+      [token, Cl.uint(withdrawalAmount), Cl.address(user)],
+      user
+    );
 
-  //   expect(result).toBeErr(Cl.uint(102)); // ERR_EXCEED_WITHDRAW_LIMIT
-  // });
+    expect(result).toBeErr(Cl.uint(102)); // ERR_EXCEED_WITHDRAW_LIMIT
+  });
 });
