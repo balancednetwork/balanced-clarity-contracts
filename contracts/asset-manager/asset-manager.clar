@@ -45,14 +45,14 @@
   )
 )
 
-;; (define-public (reset-limit (token <ft-trait>))
-;;   (begin
-;;     (asserts! (is-eq tx-sender CONTRACT_OWNER) ERR_UNAUTHORIZED)
-;;     (let ((balance (unwrap-panic (get-balance token))))
-;;       (map-set current-limit { token: (contract-of token) } { current-limit: (/ (* balance (map-get? percentage { token: token })) POINTS) }))
-;;     (ok true)
-;;   )
-;; )
+(define-public (reset-limit (token <ft-trait>))
+  (begin
+    (asserts! (is-eq tx-sender CONTRACT_OWNER) ERR_UNAUTHORIZED)
+    (let ((balance (unwrap-panic (get-balance token))))
+      (map-set current-limit { token: (contract-of token) } { current-limit: (/ (* balance (get-percentage token )) POINTS) }))
+    (ok true)
+  )
+)
 
 (define-public (deposit (token <ft-trait>) (amount uint))
   (begin
@@ -80,11 +80,32 @@
 ;;
 
 ;; read only functions
+(define-read-only (get-current-limit (token <ft-trait>))
+  (get current-limit (unwrap-panic (map-get? current-limit { token: (contract-of token) })))
+)
+
+(define-read-only (get-period (token <ft-trait>))
+  (let ((period-tuple (map-get? period { token: (contract-of token) })))
+    (if (is-some period-tuple)
+        (get period (unwrap-panic period-tuple))
+        u0
+    )
+  )
+)
+
+(define-read-only (get-percentage (token <ft-trait>))
+  (let ((percentage-tuple (map-get? percentage { token: (contract-of token) })))
+    (if (is-some percentage-tuple)
+        (get percentage (unwrap-panic percentage-tuple))
+        u0
+    )
+  )
+)
 ;;
 
 ;; private functions
 (define-private (get-balance (token <ft-trait>))
-  (if (is-eq token 'ST000000000000000000002AMW42H.nativetoken)
+  (if (is-eq (contract-of token) 'ST000000000000000000002AMW42H.nativetoken)
       (ok (stx-get-balance (as-contract tx-sender)))
       (ok (unwrap! (contract-call? token get-balance (as-contract tx-sender)) ERR_INVALID_AMOUNT))
   )
@@ -105,35 +126,17 @@
   )
 )
 
-(define-private (get-period (token <ft-trait>))
-  (let ((period-tuple (map-get? period { token: (contract-of token) })))
-    (if (is-some period-tuple)
-        (get period (unwrap-panic period-tuple))
-        u0
-    )
-  )
-)
-
-(define-private (get-percentage (token <ft-trait>))
-  (let ((percentage-tuple (map-get? percentage { token: (contract-of token) })))
-    (if (is-some percentage-tuple)
-        (get percentage (unwrap-panic percentage-tuple))
-        u0
-    )
-  )
-)
-
 (define-private (calculate-limit (balance uint) (token <ft-trait>))
   (let ((token-period (get-period token)))
     (let ((token-percentage (get-percentage token)))
       (let ((max-limit (/ (* balance token-percentage) POINTS)))
-            (let ((max-withdraw (- balance max-limit)))
+        (let ((max-withdraw (- balance max-limit)))
               (let ((time-diff (- block-height (get last-update (unwrap-panic (map-get? last-update { token: (contract-of token) }))))))
                 (let ((capped-time-diff (if (< time-diff token-period) time-diff token-period)))
                   (let ((added-allowed-withdrawal (/ (* max-withdraw capped-time-diff) token-period)))
-                    (let ((limit (- (get current-limit (unwrap-panic (map-get? current-limit { token: (contract-of token) }))) added-allowed-withdrawal)))
+                    (let ((limit (+ (get current-limit (unwrap-panic (map-get? current-limit { token: (contract-of token) }))) added-allowed-withdrawal)))
                       (let ((capped-limit (if (< balance limit) balance limit)))
-                        (if (> capped-limit max-limit) capped-limit max-limit)
+                        (if (> capped-limit max-limit) max-limit capped-limit)
                       )
                     )
                   )
