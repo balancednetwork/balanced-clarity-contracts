@@ -114,9 +114,9 @@
 (define-private (verify-withdraw (token <ft-trait>) (amount uint))
   (let ((balance (unwrap-panic (get-balance token))))
     (let ((limit (calculate-limit balance token)))
-      (if (>= (- balance amount) limit)
+      (if (< amount limit)
           (begin
-            (map-set current-limit { token: (contract-of token) } { current-limit: limit })
+            (map-set current-limit { token: (contract-of token) } { current-limit: (- limit amount) })
             (map-set last-update { token: (contract-of token) } { last-update: block-height })
             (ok true)
           )

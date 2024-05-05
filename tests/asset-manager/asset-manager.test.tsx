@@ -134,10 +134,10 @@ describe("asset-manager", () => {
   it("allows withdrawal when limit is not exceeded", () => {
     const token = Cl.contractPrincipal(deployer!, "sbtc");
     const amount = 1000;
-    const withdrawalAmount = 900;
+    const withdrawalAmount = 899;
     const newPeriod = 10000;
     const newPercentage = 9000;
-    const allowedWithdrawal = (amount * newPercentage) / 10000;
+    const allowedWithdrawal = ((amount * newPercentage) / 10000) - 1;
 
     expect(withdrawalAmount).toBeLessThanOrEqual(allowedWithdrawal);
 
@@ -177,7 +177,13 @@ describe("asset-manager", () => {
   it("does not allow withdrawal exceeding limit", () => {
     const token = Cl.contractPrincipal(deployer!, "sbtc");
     const amount = 1000;
-    const withdrawalAmount = 901;
+    const withdrawalAmount = 900;
+    const newPeriod = 10000;
+    const newPercentage = 9000;
+
+    const allowedWithdrawal = ((amount * newPercentage) / 10000) - 1;
+
+    expect(withdrawalAmount).toBeGreaterThan(allowedWithdrawal);
 
     simnet.callPublicFn(
       token.contractName.content,
@@ -195,7 +201,7 @@ describe("asset-manager", () => {
     simnet.callPublicFn(
       assetManager.contractName.content,
       "configure-rate-limit",
-      [token, Cl.uint(10000), Cl.uint(9000)],
+      [token, Cl.uint(newPeriod), Cl.uint(newPercentage)],
       deployer!
     );
 
