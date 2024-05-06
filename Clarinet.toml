@@ -15,18 +15,6 @@ path = 'contracts/asset-manager/messages.clar'
 clarity_version = 2
 epoch = 2.4
 
-[contracts.token]
-path = 'contracts/mocks/token.clar'
-clarity_version = 2
-epoch = 2.4
-depends_on = ["sip-010-trait"]
-
-[contracts.sbtc]
-path = "contracts/mocks/sbtc.clar"
-clarity_version = 2
-epoch = 2.4
-depends_on = ["sip-010-trait"]
-
 [contracts.bnusd]
 path = 'contracts/bnusd/bnusd.clar'
 clarity_version = 2
@@ -34,6 +22,16 @@ epoch = 2.4
 
 [contracts.bnusd-messages]
 path = 'contracts/bnusd/messages.clar'
+clarity_version = 2
+epoch = 2.4
+
+[contracts.call-service-receiver-trait]
+path = 'lib/xcall/call-service-receiver-trait.clar'
+clarity_version = 2
+epoch = 2.4
+
+[contracts.call-service-trait]
+path = 'lib/xcall/call-service-trait.clar'
 clarity_version = 2
 epoch = 2.4
 
@@ -47,8 +45,18 @@ path = 'lib/rlp/rlp-encode.clar'
 clarity_version = 2
 epoch = 2.4
 
+[contracts.sbtc]
+path = 'contracts/mocks/sbtc.clar'
+clarity_version = 2
+epoch = 2.4
+
 [contracts.sip-010-trait]
 path = 'lib/sips/sip-010-trait.clar'
+clarity_version = 2
+epoch = 2.4
+
+[contracts.token]
+path = 'contracts/mocks/token.clar'
 clarity_version = 2
 epoch = 2.4
 

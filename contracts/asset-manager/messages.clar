@@ -15,6 +15,8 @@
 (define-constant DEPOSIT_REVERT_NAME "DepositRevert")
 (define-constant WITHDRAW_TO_NAME "WithdrawTo")
 (define-constant WITHDRAW_NATIVE_TO_NAME "WithdrawNativeTo")
+
+(define-constant ERR_INVALID_METHOD (err u100))
 ;;
 
 ;; data vars
@@ -122,6 +124,50 @@
 ;;
 
 ;; read only functions
+(define-public (get-method (data (buff 1024)))
+  (let (
+    (rlp-list (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-decode rlp-to-list data))
+    (method-bytes (unwrap-panic (element-at? rlp-list u0)))
+  )
+    (ok
+      (if (is-eq method-bytes DEPOSIT_NAME)
+          DEPOSIT_NAME
+          (if (is-eq method-bytes DEPOSIT_REVERT_NAME)
+              DEPOSIT_REVERT_NAME
+              (if (is-eq method-bytes WITHDRAW_TO_NAME)
+                  WITHDRAW_TO_NAME
+                  (if (is-eq method-bytes WITHDRAW_NATIVE_TO_NAME)
+                      WITHDRAW_NATIVE_TO_NAME
+                      (unwrap-panic (err ERR_INVALID_METHOD))
+                  )
+              )
+          )
+      )
+    )
+  )
+)
+
+(define-read-only (decode-withdraw-to (data (buff 1024)))
+  (let (
+    (rlp-list (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-decode rlp-to-list data))
+    (token-address (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-decode rlp-decode-string rlp-list u1))
+    (to (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-decode rlp-decode-string rlp-list u2))
+    (amount (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-decode rlp-decode-uint rlp-list u3))
+  )
+    (ok (tuple (token-address token-address) (to to) (amount amount)))
+  )
+)
+
+(define-read-only (decode-deposit-revert (data (buff 1024)))
+  (let (
+    (rlp-list (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-decode rlp-to-list data))
+    (token-address (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-decode rlp-decode-string rlp-list u1))
+    (amount (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-decode rlp-decode-uint rlp-list u2))
+    (to (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-decode rlp-decode-string rlp-list u3))
+  )
+    (ok (tuple (token-address token-address) (amount amount) (to to)))
+  )
+)
 ;;
 
 ;; private functions
