@@ -12,6 +12,19 @@ describe("asset-manager", () => {
     ASSET_MANAGER_CONTRACT_NAME
   );
 
+  it("allows members to deposit native tokens", () => {
+    const amount = 1000;
+  
+    const { result } = simnet.callPublicFn(
+      assetManager.contractName.content,
+      "deposit-native",
+      [Cl.uint(amount)],
+      user
+    );
+  
+    expect(result).toBeOk(Cl.bool(true));
+  });
+
   it("allows members to deposit tokens", () => {
     const token = Cl.contractPrincipal(deployer!, "sbtc");
     const amount = 1000;

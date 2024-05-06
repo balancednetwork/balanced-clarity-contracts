@@ -16,6 +16,7 @@
 (define-constant ERR_INVALID_AMOUNT (err u101))
 (define-constant ERR_EXCEED_WITHDRAW_LIMIT (err u102))
 (define-constant POINTS u10000)
+(define-constant NATIVE_TOKEN 'ST000000000000000000002AMW42H.nativetoken)
 ;;
 
 ;; data vars
@@ -25,10 +26,12 @@
 ;;
 
 ;; data maps
-(define-map period { token: principal } { period: uint })
-(define-map percentage { token: principal } { percentage: uint })
-(define-map last-update { token: principal } { last-update: uint })
-(define-map current-limit { token: principal } { current-limit: uint })
+(define-map limit-map principal {
+  period: uint,
+  percentage: uint,
+  last-update: uint,
+  current-limit: uint
+})
 ;;
 
 ;; public functions
@@ -36,11 +39,14 @@
   (begin
     (asserts! (is-eq tx-sender CONTRACT_OWNER) ERR_UNAUTHORIZED)
     (asserts! (<= new-percentage POINTS) ERR_INVALID_AMOUNT)
-    (map-set period { token: (contract-of token) } { period: new-period })
-    (map-set percentage { token: (contract-of token) } { percentage: new-percentage })
-    (map-set last-update { token: (contract-of token) } { last-update: block-height })
     (let ((balance (unwrap! (get-balance token) ERR_INVALID_AMOUNT)))
-      (map-set current-limit { token: (contract-of token) } { current-limit: (/ (* balance new-percentage) POINTS) }))
+      (map-set limit-map (contract-of token) {
+        period: new-period,
+        percentage: new-percentage,
+        last-update: block-height,
+        current-limit: (/ (* balance new-percentage) POINTS)
+      })
+    )
     (ok true)
   )
 )
@@ -49,7 +55,21 @@
   (begin
     (asserts! (is-eq tx-sender CONTRACT_OWNER) ERR_UNAUTHORIZED)
     (let ((balance (unwrap-panic (get-balance token))))
-      (map-set current-limit { token: (contract-of token) } { current-limit: (/ (* balance (get-percentage token )) POINTS) }))
+      (let ((period-tuple (unwrap-panic (map-get? limit-map (contract-of token)))))
+        (map-set limit-map (contract-of token) (merge period-tuple {
+          current-limit: (/ (* balance (get percentage period-tuple)) POINTS)
+        }))
+      )
+    )
+    (ok true)
+  )
+)
+
+(define-public (deposit-native (amount uint) )
+  (begin
+    (asserts! (> amount u0) ERR_INVALID_AMOUNT)
+    (try! (stx-transfer? amount tx-sender (as-contract tx-sender)))
+    ;; TODO: Send deposit message to ICON network
     (ok true)
   )
 )
@@ -81,31 +101,27 @@
 
 ;; read only functions
 (define-read-only (get-current-limit (token <ft-trait>))
-  (get current-limit (unwrap-panic (map-get? current-limit { token: (contract-of token) })))
+  (let ((period-tuple (unwrap-panic (map-get? limit-map (contract-of token)))))
+    (get current-limit period-tuple)
+  )
 )
 
 (define-read-only (get-period (token <ft-trait>))
-  (let ((period-tuple (map-get? period { token: (contract-of token) })))
-    (if (is-some period-tuple)
-        (get period (unwrap-panic period-tuple))
-        u0
-    )
+  (let ((period-tuple (unwrap-panic (map-get? limit-map (contract-of token)))))
+    (get period period-tuple)
   )
 )
 
 (define-read-only (get-percentage (token <ft-trait>))
-  (let ((percentage-tuple (map-get? percentage { token: (contract-of token) })))
-    (if (is-some percentage-tuple)
-        (get percentage (unwrap-panic percentage-tuple))
-        u0
-    )
+  (let ((period-tuple (unwrap-panic (map-get? limit-map (contract-of token)))))
+    (get percentage period-tuple)
   )
 )
 ;;
 
 ;; private functions
 (define-private (get-balance (token <ft-trait>))
-  (if (is-eq (contract-of token) 'ST000000000000000000002AMW42H.nativetoken)
+  (if (is-eq (contract-of token) NATIVE_TOKEN)
       (ok (stx-get-balance (as-contract tx-sender)))
       (ok (unwrap! (contract-call? token get-balance (as-contract tx-sender)) ERR_INVALID_AMOUNT))
   )
@@ -116,8 +132,12 @@
     (let ((limit (calculate-limit balance token)))
       (if (< amount limit)
           (begin
-            (map-set current-limit { token: (contract-of token) } { current-limit: (- limit amount) })
-            (map-set last-update { token: (contract-of token) } { last-update: block-height })
+            (let ((period-tuple (unwrap-panic (map-get? limit-map (contract-of token)))))
+              (map-set limit-map (contract-of token) (merge period-tuple {
+                current-limit: (- limit amount),
+                last-update: block-height
+              }))
+            )
             (ok true)
           )
           (err ERR_EXCEED_WITHDRAW_LIMIT)
@@ -127,24 +147,26 @@
 )
 
 (define-private (calculate-limit (balance uint) (token <ft-trait>))
-  (let ((token-period (get-period token)))
-    (let ((token-percentage (get-percentage token)))
-      (let ((max-limit (/ (* balance token-percentage) POINTS)))
-        (let ((max-withdraw (- balance max-limit)))
-              (let ((time-diff (- block-height (get last-update (unwrap-panic (map-get? last-update { token: (contract-of token) }))))))
-                (let ((capped-time-diff (if (< time-diff token-period) time-diff token-period)))
-                  (let ((added-allowed-withdrawal (/ (* max-withdraw capped-time-diff) token-period)))
-                    (let ((limit (+ (get current-limit (unwrap-panic (map-get? current-limit { token: (contract-of token) }))) added-allowed-withdrawal)))
-                      (let ((capped-limit (if (< balance limit) balance limit)))
-                        (if (> capped-limit max-limit) max-limit capped-limit)
-                      )
+  (let ((period-tuple (unwrap-panic (map-get? limit-map (contract-of token)))))
+    (let ((token-period (get period period-tuple)))
+      (let ((token-percentage (get percentage period-tuple)))
+        (let ((max-limit (/ (* balance token-percentage) POINTS)))
+          (let ((max-withdraw (- balance max-limit)))
+            (let ((time-diff (- block-height (get last-update period-tuple))))
+              (let ((capped-time-diff (if (< time-diff token-period) time-diff token-period)))
+                (let ((added-allowed-withdrawal (/ (* max-withdraw capped-time-diff) token-period)))
+                  (let ((limit (+ (get current-limit period-tuple) added-allowed-withdrawal)))
+                    (let ((capped-limit (if (< balance limit) balance limit)))
+                      (if (> capped-limit max-limit) max-limit capped-limit)
                     )
                   )
                 )
               )
             )
           )
+        )
       )
     )
   )
+)
 ;;
