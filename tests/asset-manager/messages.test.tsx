@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { Cl } from "@stacks/transactions";
-import { encode, decode } from "rlp";
+import { encode } from "rlp";
 
 const ASSET_MANAGER_MESSAGES_CONTRACT_NAME = "asset-manager-messages";
 
@@ -118,5 +118,59 @@ describe("asset-manager-messages", () => {
     const expectedEncodedData = Uint8Array.from(encode(message));
     // @ts-ignore: Property 'value' does not exist on type 'ClarityValue'. Property 'value' does not exist on type 'ContractPrincipalCV'.
     expect(result.value.buffer).toEqual(expectedEncodedData);
+  });
+
+  it("should decode WithdrawTo message correctly", () => {
+    const message = [
+      "WithdrawTo",
+      "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.sbtc",
+      "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM",
+      1000,
+    ];
+
+    const encodedData = Uint8Array.from(encode(message));
+
+    const { result } = simnet.callReadOnlyFn(
+      assetManagerMessages.contractName.content,
+      "decode-withdraw-to",
+      [Cl.buffer(encodedData)],
+      deployer!
+    );
+
+    // @ts-ignore: Property 'value' does not exist on type 'ClarityValue'. Property 'value' does not exist on type 'ContractPrincipalCV'.
+    expect(result.value).toEqual(
+      Cl.tuple({
+        "token-address": Cl.stringAscii(message[1] as string),
+        to: Cl.stringAscii(message[2] as string),
+        amount: Cl.uint(message[3]),
+      })
+    );
+  });
+
+  it("should decode DepositRevert message correctly", () => {
+    const message = [
+      "DepositRevert",
+      "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.sbtc",
+      1000,
+      "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM",
+    ];
+
+    const encodedData = Uint8Array.from(encode(message));
+
+    const { result } = simnet.callReadOnlyFn(
+      assetManagerMessages.contractName.content,
+      "decode-deposit-revert",
+      [Cl.buffer(encodedData)],
+      deployer!
+    );
+
+    // @ts-ignore: Property 'value' does not exist on type 'ClarityValue'. Property 'value' does not exist on type 'ContractPrincipalCV'.
+    expect(result.value).toEqual(
+      Cl.tuple({
+        "token-address": Cl.stringAscii(message[1] as string),
+        amount: Cl.uint(message[2]),
+        to: Cl.stringAscii(message[3] as string),
+      })
+    );
   });
 });
