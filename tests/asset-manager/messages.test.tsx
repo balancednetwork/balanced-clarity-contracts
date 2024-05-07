@@ -19,7 +19,7 @@ describe("asset-manager-messages", () => {
       "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM",
       "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.asset-manager",
       1000,
-      "1234",
+      "test message",
     ];
 
     const { result } = simnet.callPublicFn(
@@ -172,5 +172,107 @@ describe("asset-manager-messages", () => {
         to: Cl.stringAscii(message[3] as string),
       })
     );
+  });
+
+  it("should return the correct method for Deposit", () => {
+    const message = [
+      'Deposit',
+      'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.sbtc',
+      'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM',
+      'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.asset-manager',
+      1000,
+      '1234',
+    ];
+
+    const encodedData = Uint8Array.from(encode(message));
+
+    const { result } = simnet.callReadOnlyFn(
+      assetManagerMessages.contractName.content,
+      'get-method',
+      [Cl.buffer(encodedData)],
+      deployer!
+    );
+
+    expect(result).toBeOk(Cl.stringAscii('Deposit'));
+  });
+
+  it("should return the correct method for DepositRevert", () => {
+    const message = [
+      'DepositRevert',
+      'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.sbtc',
+      1000,
+      'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM',
+    ];
+
+    const encodedData = Uint8Array.from(encode(message));
+
+    const { result } = simnet.callReadOnlyFn(
+      assetManagerMessages.contractName.content,
+      'get-method',
+      [Cl.buffer(encodedData)],
+      deployer!
+    );
+
+    expect(result).toBeOk(Cl.stringAscii('DepositRevert'));
+  });
+
+  it("should return the correct method for WithdrawTo", () => {
+    const message = [
+      'WithdrawTo',
+      'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.sbtc',
+      'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM',
+      1000,
+    ];
+
+    const encodedData = Uint8Array.from(encode(message));
+
+    const { result } = simnet.callReadOnlyFn(
+      assetManagerMessages.contractName.content,
+      'get-method',
+      [Cl.buffer(encodedData)],
+      deployer!
+    );
+
+    expect(result).toBeOk(Cl.stringAscii('WithdrawTo'));
+  });
+
+  it("should return the correct method for WithdrawNativeTo", () => {
+    const message = [
+      'WithdrawNativeTo',
+      'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.sbtc',
+      'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM',
+      1000,
+    ];
+
+    const encodedData = Uint8Array.from(encode(message));
+
+    const { result } = simnet.callReadOnlyFn(
+      assetManagerMessages.contractName.content,
+      'get-method',
+      [Cl.buffer(encodedData)],
+      deployer!
+    );
+
+    expect(result).toBeOk(Cl.stringAscii('WithdrawNativeTo'));
+  });
+
+  it("should return ERR_INVALID_METHOD for an unknown method", () => {
+    const message = [
+      'UnknownMethod',
+      'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.sbtc',
+      'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM',
+      1000,
+    ];
+
+    const encodedData = Uint8Array.from(encode(message));
+
+    const { result } = simnet.callReadOnlyFn(
+      assetManagerMessages.contractName.content,
+      'get-method',
+      [Cl.buffer(encodedData)],
+      deployer!
+    );
+
+    expect(result).toBeErr(Cl.uint(100)); // ERR_INVALID_METHOD is defined as (err u100)
   });
 });

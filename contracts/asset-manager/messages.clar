@@ -124,28 +124,26 @@
 ;;
 
 ;; read only functions
-;; (define-public (get-method (data (buff 1024)))
-;;   (let (
-;;     (rlp-list (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-decode rlp-to-list data))
-;;     (method-bytes (unwrap-panic (element-at? rlp-list u0)))
-;;   )
-;;     (ok
-;;       (if (is-eq method-bytes DEPOSIT_NAME)
-;;           DEPOSIT_NAME
-;;           (if (is-eq method-bytes DEPOSIT_REVERT_NAME)
-;;               DEPOSIT_REVERT_NAME
-;;               (if (is-eq method-bytes WITHDRAW_TO_NAME)
-;;                   WITHDRAW_TO_NAME
-;;                   (if (is-eq method-bytes WITHDRAW_NATIVE_TO_NAME)
-;;                       WITHDRAW_NATIVE_TO_NAME
-;;                       (unwrap-panic (err ERR_INVALID_METHOD))
-;;                   )
-;;               )
-;;           )
-;;       )
-;;     )
-;;   )
-;; )
+(define-read-only (get-method (data (buff 1024)))
+  (let (
+    (rlp-list (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-decode rlp-to-list data))
+    (method-bytes (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-decode rlp-decode-string rlp-list u0))
+  )
+    (if (is-eq method-bytes "Deposit")
+        (ok "Deposit")
+        (if (is-eq method-bytes "DepositRevert")
+            (ok "DepositRevert")
+            (if (is-eq method-bytes "WithdrawTo")
+                (ok "WithdrawTo")
+                (if (is-eq method-bytes "WithdrawNativeTo")
+                    (ok "WithdrawNativeTo")
+                    ERR_INVALID_METHOD
+                )
+            )
+        )
+    )
+  )
+)
 
 (define-read-only (decode-withdraw-to (data (buff 1024)))
   (let (
