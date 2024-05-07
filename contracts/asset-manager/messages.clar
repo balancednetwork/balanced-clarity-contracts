@@ -58,7 +58,7 @@
     (amount (get amount message))
     (data (get data message))
   )
-    (ok (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-encode encode-arr  ;; does the contract-call? address have to be hard coded?
+    (ok (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-encode encode-arr
       (list
         (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-encode encode-string DEPOSIT_NAME)
         (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-encode encode-string token-address)
@@ -124,28 +124,28 @@
 ;;
 
 ;; read only functions
-(define-public (get-method (data (buff 1024)))
-  (let (
-    (rlp-list (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-decode rlp-to-list data))
-    (method-bytes (unwrap-panic (element-at? rlp-list u0)))
-  )
-    (ok
-      (if (is-eq method-bytes DEPOSIT_NAME)
-          DEPOSIT_NAME
-          (if (is-eq method-bytes DEPOSIT_REVERT_NAME)
-              DEPOSIT_REVERT_NAME
-              (if (is-eq method-bytes WITHDRAW_TO_NAME)
-                  WITHDRAW_TO_NAME
-                  (if (is-eq method-bytes WITHDRAW_NATIVE_TO_NAME)
-                      WITHDRAW_NATIVE_TO_NAME
-                      (unwrap-panic (err ERR_INVALID_METHOD))
-                  )
-              )
-          )
-      )
-    )
-  )
-)
+;; (define-public (get-method (data (buff 1024)))
+;;   (let (
+;;     (rlp-list (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-decode rlp-to-list data))
+;;     (method-bytes (unwrap-panic (element-at? rlp-list u0)))
+;;   )
+;;     (ok
+;;       (if (is-eq method-bytes DEPOSIT_NAME)
+;;           DEPOSIT_NAME
+;;           (if (is-eq method-bytes DEPOSIT_REVERT_NAME)
+;;               DEPOSIT_REVERT_NAME
+;;               (if (is-eq method-bytes WITHDRAW_TO_NAME)
+;;                   WITHDRAW_TO_NAME
+;;                   (if (is-eq method-bytes WITHDRAW_NATIVE_TO_NAME)
+;;                       WITHDRAW_NATIVE_TO_NAME
+;;                       (unwrap-panic (err ERR_INVALID_METHOD))
+;;                   )
+;;               )
+;;           )
+;;       )
+;;     )
+;;   )
+;; )
 
 (define-read-only (decode-withdraw-to (data (buff 1024)))
   (let (

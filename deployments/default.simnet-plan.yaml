@@ -60,6 +60,11 @@ plan:
             path: contracts/asset-manager/asset-manager.clar
             clarity-version: 2
         - emulated-contract-publish:
+            contract-name: rlp-decode
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: lib/rlp/rlp-decode.clar
+            clarity-version: 2
+        - emulated-contract-publish:
             contract-name: rlp-encode
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
             path: lib/rlp/rlp-encode.clar
@@ -80,9 +85,14 @@ plan:
             path: contracts/bnusd/messages.clar
             clarity-version: 2
         - emulated-contract-publish:
-            contract-name: rlp-decode
+            contract-name: call-service-receiver-trait
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            path: lib/rlp/rlp-decode.clar
+            path: lib/xcall/call-service-receiver-trait.clar
+            clarity-version: 2
+        - emulated-contract-publish:
+            contract-name: call-service-trait
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: lib/xcall/call-service-trait.clar
             clarity-version: 2
         - emulated-contract-publish:
             contract-name: sbtc
