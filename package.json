@@ -10,7 +10,8 @@
     "test:report": "vitest run -- --coverage --costs",
     "test:watch": "chokidar \"tests/**/*.ts\" \"contracts/**/*.clar\" -c \"npm run test:report\"",
     "test:asset-manager": "vitest run tests/asset-manager/asset-manager.test.tsx",
-    "test:asset-manager-messages": "vitest run tests/asset-manager/messages.test.tsx"
+    "test:asset-manager-messages": "vitest run tests/asset-manager/messages.test.tsx",
+    "test:util": "vitest run tests/util.test.ts"
   },
   "author": "",
   "license": "ISC",

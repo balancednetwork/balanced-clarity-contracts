@@ -50,16 +50,6 @@ plan:
     - id: 0
       transactions:
         - emulated-contract-publish:
-            contract-name: sip-010-trait
-            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            path: lib/sips/sip-010-trait.clar
-            clarity-version: 2
-        - emulated-contract-publish:
-            contract-name: asset-manager
-            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            path: contracts/asset-manager/asset-manager.clar
-            clarity-version: 2
-        - emulated-contract-publish:
             contract-name: rlp-decode
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
             path: lib/rlp/rlp-decode.clar
@@ -75,6 +65,26 @@ plan:
             path: contracts/asset-manager/messages.clar
             clarity-version: 2
         - emulated-contract-publish:
+            contract-name: call-service-receiver-trait
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: lib/xcall/call-service-receiver-trait.clar
+            clarity-version: 2
+        - emulated-contract-publish:
+            contract-name: sip-010-trait
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: lib/sips/sip-010-trait.clar
+            clarity-version: 2
+        - emulated-contract-publish:
+            contract-name: sbtc
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/mocks/sbtc.clar
+            clarity-version: 2
+        - emulated-contract-publish:
+            contract-name: asset-manager
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/asset-manager/asset-manager.clar
+            clarity-version: 2
+        - emulated-contract-publish:
             contract-name: bnusd
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
             path: contracts/bnusd/bnusd.clar
@@ -85,24 +95,19 @@ plan:
             path: contracts/bnusd/messages.clar
             clarity-version: 2
         - emulated-contract-publish:
-            contract-name: call-service-receiver-trait
-            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            path: lib/xcall/call-service-receiver-trait.clar
-            clarity-version: 2
-        - emulated-contract-publish:
             contract-name: call-service-trait
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
             path: lib/xcall/call-service-trait.clar
             clarity-version: 2
         - emulated-contract-publish:
-            contract-name: sbtc
-            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            path: contracts/mocks/sbtc.clar
-            clarity-version: 2
-        - emulated-contract-publish:
             contract-name: token
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
             path: contracts/mocks/token.clar
+            clarity-version: 2
+        - emulated-contract-publish:
+            contract-name: util
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/util.clar
             clarity-version: 2
         - emulated-contract-publish:
             contract-name: xcall-manager
