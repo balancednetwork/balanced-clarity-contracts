@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { Cl } from "@stacks/transactions";
 import { encode } from "rlp";
 
-const ASSET_MANAGER_CONTRACT_NAME = "asset-manager"; // naming convention is contract filename without the file extension
+const ASSET_MANAGER_CONTRACT_NAME = "asset-manager";
 const ICON_ASSET_MANAGER = "0x1.icon/cxabea09a8c5f3efa54d0a0370b14715e6f2270591";
 const X_CALL_NETWORK_ADDRESS = "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.x-call";
 
@@ -127,7 +127,6 @@ describe("asset-manager", () => {
       deployer!
     );
   
-    // Reset the withdrawal limit
     const { result: resetResult } = simnet.callPublicFn(
       assetManager.contractName.content,
       "reset-limit",
@@ -136,7 +135,6 @@ describe("asset-manager", () => {
     );
     expect(resetResult).toBeOk(Cl.bool(true));
   
-    // Check the updated withdrawal limit
     const { result: limitResult } = simnet.callReadOnlyFn(
       assetManager.contractName.content,
       "get-current-limit",
@@ -228,7 +226,7 @@ describe("asset-manager", () => {
       user
     );
 
-    expect(result).toBeErr(Cl.uint(102)); // ERR_EXCEED_WITHDRAW_LIMIT
+    expect(result).toBeErr(Cl.uint(102));
   });
 
   it("should handle WithdrawTo message correctly", () => {
@@ -269,9 +267,9 @@ describe("asset-manager", () => {
       assetManager.contractName.content,
       'handle-call-message',
       [
-        Cl.stringAscii(X_CALL_NETWORK_ADDRESS), // Replace with the actual X_CALL_NETWORK_ADDRESS
+        Cl.stringAscii(X_CALL_NETWORK_ADDRESS),
         Cl.buffer(encodedData),
-        Cl.list([]), // Replace with the actual default sources
+        Cl.list([]),
       ],
       deployer!
     );
@@ -295,7 +293,7 @@ describe("asset-manager", () => {
       [
         Cl.stringAscii('0x1.icon/cxabea09a8c5f3efa54d0a0370b14715e6f2270592'),
         Cl.buffer(encodedData),
-        Cl.list([]), // Replace with the actual default sources
+        Cl.list([]),
       ],
       deployer!
     );
