@@ -325,6 +325,29 @@ describe("asset-manager", () => {
     expect(result).toBeErr(Cl.uint(100));
   });
 
+  it("should fail to handle WithdrawNativeTo message", () => {
+    const message = [
+      'WithdrawNativeTo',
+      'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM',
+      1000,
+    ];
+  
+    const encodedData = Uint8Array.from(encode(message));
+  
+    const { result } = simnet.callPublicFn(
+      assetManager.contractName.content,
+      'handle-call-message',
+      [
+        Cl.stringAscii(ICON_ASSET_MANAGER),
+        Cl.buffer(encodedData),
+        Cl.list([]),
+      ],
+      deployer!
+    );
+  
+    expect(result).toBeErr(Cl.uint(105));
+  });
+
   it("should fail to handle unknown message types", () => {
     const message = [
       'UnknownMessage',
