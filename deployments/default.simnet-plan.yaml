@@ -75,6 +75,11 @@ plan:
             path: lib/sips/sip-010-trait.clar
             clarity-version: 2
         - emulated-contract-publish:
+            contract-name: sbtc
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/mocks/sbtc.clar
+            clarity-version: 2
+        - emulated-contract-publish:
             contract-name: asset-manager
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
             path: contracts/asset-manager/asset-manager.clar
@@ -93,11 +98,6 @@ plan:
             contract-name: call-service-trait
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
             path: lib/xcall/call-service-trait.clar
-            clarity-version: 2
-        - emulated-contract-publish:
-            contract-name: sbtc
-            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            path: contracts/mocks/sbtc.clar
             clarity-version: 2
         - emulated-contract-publish:
             contract-name: token
