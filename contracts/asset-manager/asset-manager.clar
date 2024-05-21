@@ -13,16 +13,17 @@
 
 ;; constants
 (define-constant CONTRACT_OWNER tx-sender)
-(define-constant ICON_ASSET_MANAGER "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.icon-bridge")
+(define-constant ICON_ASSET_MANAGER "0x1.icon/cxabea09a8c5f3efa54d0a0370b14715e6f2270591")
 (define-constant X_CALL_NETWORK_ADDRESS "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.x-call")
 (define-constant ERR_UNAUTHORIZED (err u100))
 (define-constant ERR_INVALID_AMOUNT (err u101))
 (define-constant ERR_EXCEED_WITHDRAW_LIMIT (err u102))
 (define-constant ERR_INVALID_TOKEN (err u103))
 (define-constant ERR_INVALID_MESSAGE (err u104))
-(define-constant ERR_INVALID_MESSAGE_WITHDRAW_TO_NATIVE_UNSUPPORTED (err u104))
+(define-constant ERR_INVALID_MESSAGE_WITHDRAW_TO_NATIVE_UNSUPPORTED (err u105))
 (define-constant POINTS u10000)
 (define-constant NATIVE_TOKEN 'ST000000000000000000002AMW42H.nativetoken)
+(define-constant SBTC_TOKEN 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.sbtc)
 ;;
 
 ;; data vars
@@ -35,18 +36,9 @@
   last-update: uint,
   current-limit: uint
 })
-(define-map token-trait-map principal <ft-trait>)
 ;;
 
 ;; public functions
-(define-public (register-token (token <ft-trait>))
-  (begin
-    (asserts! (is-eq tx-sender CONTRACT_OWNER) ERR_UNAUTHORIZED)
-    (map-set token-trait-map (contract-of token) token)
-    (ok true)
-  )
-)
-
 (define-public (configure-rate-limit (token <ft-trait>) (new-period uint) (new-percentage uint))
   (begin
     (asserts! (is-eq tx-sender CONTRACT_OWNER) ERR_UNAUTHORIZED)
@@ -112,7 +104,7 @@
 
 (define-public (handle-call-message (from (string-ascii 150)) (data (buff 1024)) (protocols (list 50 (string-ascii 150))))
   (let (
-    (method-result (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.asset-manager-messages get-method data))
+    (method-result (contract-call? .asset-manager-messages get-method data))
     (deposit-name (contract-call? .asset-manager-messages get-deposit-name))
     (deposit-revert-name (contract-call? .asset-manager-messages get-deposit-revert-name))
     (withdraw-to-name (contract-call? .asset-manager-messages get-withdraw-to-name))
@@ -121,38 +113,42 @@
     (asserts! (is-ok method-result) ERR_INVALID_MESSAGE)
     (let ((method (unwrap-panic method-result)))
       (if (is-eq method withdraw-to-name)
-        (let ((message-result (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.asset-manager-messages decode-withdraw-to data)))
+        (let ((message-result (contract-call? .asset-manager-messages decode-withdraw-to data)))
           (asserts! (is-ok message-result) ERR_INVALID_MESSAGE)
           (let ((message (unwrap-panic message-result)))
             (asserts! (is-eq from ICON_ASSET_MANAGER) ERR_UNAUTHORIZED)
             (let (
-              (token-address (get token-address message))
-              (token-principal (unwrap-panic (principal-of? (unwrap-panic (as-max-len? (unwrap-panic (to-consensus-buff? token-address)) u33)))))
-              (token-trait (unwrap! (map-get? token-trait-map token-principal) ERR_INVALID_TOKEN))
-              (to-address (get to message))
-              (to-principal (unwrap-panic (principal-of? (unwrap-panic (as-max-len? (unwrap-panic (to-consensus-buff? to-address)) u33)))))
+              (token-address-string (get token-address message))
+              (to-address-string (get to message))
+              (to-address-principal (contract-call? .util address-string-to-principal (unwrap-panic (as-max-len? token-address-string 128))))
               (amount (get amount message))
             )
-              (withdraw token-trait amount to-principal)
+              (if (is-eq token-address-string "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.sbtc")
+                  (withdraw .sbtc amount to-address-principal)
+                  ;; (if (is-eq token-address "ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.bnusd")
+                  ;;     (withdraw 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.bnusd amount to-principal)
+                  ;;     ERR_INVALID_TOKEN
+                  ;; )
+                  ERR_INVALID_TOKEN
+              )
             )
           )
         )
         (if (is-eq method withdraw-native-to-name)
           ERR_INVALID_MESSAGE_WITHDRAW_TO_NATIVE_UNSUPPORTED
           (if (is-eq method deposit-revert-name)
-            (let ((message-result (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.asset-manager-messages decode-deposit-revert data)))
+            (let ((message-result (contract-call? .asset-manager-messages decode-deposit-revert data)))
               (asserts! (is-ok message-result) ERR_INVALID_MESSAGE)
               (let ((message (unwrap-panic message-result)))
                 (asserts! (is-eq from X_CALL_NETWORK_ADDRESS) ERR_UNAUTHORIZED)
                 (let (
                   (token-address (get token-address message))
                   (token-principal (unwrap-panic (principal-of? (unwrap-panic (as-max-len? (unwrap-panic (to-consensus-buff? token-address)) u33)))))
-                  (token-trait (unwrap! (map-get? token-trait-map token-principal) ERR_INVALID_TOKEN))
                   (to-address (get to message))
                   (to-principal (unwrap-panic (principal-of? (unwrap-panic (as-max-len? (unwrap-panic (to-consensus-buff? to-address)) u33)))))
                   (amount (get amount message))
                 )
-                  (withdraw token-trait amount to-principal)
+                  (withdraw .sbtc amount to-principal)
                 )
               )
             )

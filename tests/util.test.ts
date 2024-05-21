@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import { Cl } from "@stacks/transactions";
-import { c32decode } from "c32check";
 
 const UTIL_CONTRACT_NAME = "util";
 const accounts = simnet.getAccounts();
