@@ -20,7 +20,6 @@
 ;;
 
 ;; data vars
-(define-data-var deployer-address principal 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM)
 ;;
 
 ;; data maps
@@ -58,14 +57,14 @@
     (amount (get amount message))
     (data (get data message))
   )
-    (ok (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-encode encode-arr
+    (ok (contract-call? .rlp-encode encode-arr
       (list
-        (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-encode encode-string DEPOSIT_NAME)
-        (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-encode encode-string token-address)
-        (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-encode encode-string from)
-        (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-encode encode-string to)
-        (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-encode encode-uint amount)
-        (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-encode encode-buff data)
+        (contract-call? .rlp-encode encode-string DEPOSIT_NAME)
+        (contract-call? .rlp-encode encode-string token-address)
+        (contract-call? .rlp-encode encode-string from)
+        (contract-call? .rlp-encode encode-string to)
+        (contract-call? .rlp-encode encode-uint amount)
+        (contract-call? .rlp-encode encode-buff data)
       )
     ))
   )
@@ -77,12 +76,12 @@
     (amount (get amount message))
     (to (get to message))
   )
-    (ok (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-encode encode-arr
+    (ok (contract-call? .rlp-encode encode-arr
       (list
-        (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-encode encode-string DEPOSIT_REVERT_NAME)
-        (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-encode encode-string token-address)
-        (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-encode encode-uint amount)
-        (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-encode encode-string to)
+        (contract-call? .rlp-encode encode-string DEPOSIT_REVERT_NAME)
+        (contract-call? .rlp-encode encode-string token-address)
+        (contract-call? .rlp-encode encode-uint amount)
+        (contract-call? .rlp-encode encode-string to)
       )
     ))
   )
@@ -94,12 +93,12 @@
     (to (get to message))
     (amount (get amount message))
   )
-    (ok (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-encode encode-arr
+    (ok (contract-call? .rlp-encode encode-arr
       (list
-        (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-encode encode-string WITHDRAW_TO_NAME)
-        (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-encode encode-string token-address)
-        (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-encode encode-string to)
-        (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-encode encode-uint amount)
+        (contract-call? .rlp-encode encode-string WITHDRAW_TO_NAME)
+        (contract-call? .rlp-encode encode-string token-address)
+        (contract-call? .rlp-encode encode-string to)
+        (contract-call? .rlp-encode encode-uint amount)
       )
     ))
   )
@@ -111,12 +110,12 @@
     (to (get to message))
     (amount (get amount message))
   )
-    (ok (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-encode encode-arr
+    (ok (contract-call? .rlp-encode encode-arr
       (list
-        (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-encode encode-string WITHDRAW_NATIVE_TO_NAME)
-        (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-encode encode-string token-address)
-        (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-encode encode-string to)
-        (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-encode encode-uint amount)
+        (contract-call? .rlp-encode encode-string WITHDRAW_NATIVE_TO_NAME)
+        (contract-call? .rlp-encode encode-string token-address)
+        (contract-call? .rlp-encode encode-string to)
+        (contract-call? .rlp-encode encode-uint amount)
       )
     ))
   )
@@ -126,8 +125,8 @@
 ;; read only functions
 (define-read-only (get-method (data (buff 1024)))
   (let (
-    (rlp-list (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-decode rlp-to-list data))
-    (method-bytes (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-decode rlp-decode-string rlp-list u0))
+    (rlp-list (contract-call? .rlp-decode rlp-to-list data))
+    (method-bytes (contract-call? .rlp-decode rlp-decode-string rlp-list u0))
   )
     (if (is-eq method-bytes DEPOSIT_NAME)
         (ok DEPOSIT_NAME)
@@ -163,10 +162,10 @@
 
 (define-read-only (decode-withdraw-to (data (buff 1024)))
   (let (
-    (rlp-list (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-decode rlp-to-list data))
-    (token-address (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-decode rlp-decode-string rlp-list u1))
-    (to (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-decode rlp-decode-string rlp-list u2))
-    (amount (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-decode rlp-decode-uint rlp-list u3))
+    (rlp-list (contract-call? .rlp-decode rlp-to-list data))
+    (token-address (contract-call? .rlp-decode rlp-decode-string rlp-list u1))
+    (to (contract-call? .rlp-decode rlp-decode-string rlp-list u2))
+    (amount (contract-call? .rlp-decode rlp-decode-uint rlp-list u3))
   )
     (ok (tuple (token-address token-address) (to to) (amount amount)))
   )
@@ -174,10 +173,10 @@
 
 (define-read-only (decode-deposit-revert (data (buff 1024)))
   (let (
-    (rlp-list (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-decode rlp-to-list data))
-    (token-address (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-decode rlp-decode-string rlp-list u1))
-    (amount (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-decode rlp-decode-uint rlp-list u2))
-    (to (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.rlp-decode rlp-decode-string rlp-list u3))
+    (rlp-list (contract-call? .rlp-decode rlp-to-list data))
+    (token-address (contract-call? .rlp-decode rlp-decode-string rlp-list u1))
+    (amount (contract-call? .rlp-decode rlp-decode-uint rlp-list u2))
+    (to (contract-call? .rlp-decode rlp-decode-string rlp-list u3))
   )
     (ok (tuple (token-address token-address) (amount amount) (to to)))
   )
