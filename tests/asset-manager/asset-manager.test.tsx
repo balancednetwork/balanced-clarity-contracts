@@ -230,14 +230,44 @@ describe("asset-manager", () => {
   });
 
   it("should handle WithdrawTo message correctly", () => {
+    const token = Cl.contractPrincipal(deployer!, "sbtc");
+    const amount = 1000;
+    const withdrawalAmount = 899;
+    const newPeriod = 10000;
+    const newPercentage = 9000;
+    const allowedWithdrawal = ((amount * newPercentage) / 10000) - 1;
+
+    expect(withdrawalAmount).toBeLessThanOrEqual(allowedWithdrawal);
+
     const message = [
       'WithdrawTo',
       'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.sbtc',
       'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM',
-      1000,
+      withdrawalAmount,
     ];
 
     const encodedData = Uint8Array.from(encode(message));
+
+    simnet.callPublicFn(
+      token.contractName.content,
+      "mint",
+      [Cl.uint(amount), Cl.address(user)],
+      deployer!
+    );
+
+    simnet.callPublicFn(
+      assetManager.contractName.content,
+      "deposit",
+      [token, Cl.uint(amount)],
+      user
+    );
+
+    simnet.callPublicFn(
+      assetManager.contractName.content,
+      "configure-rate-limit",
+      [token, Cl.uint(newPeriod), Cl.uint(newPercentage)],
+      deployer!
+    );
 
     const { result } = simnet.callPublicFn(
       assetManager.contractName.content,
@@ -254,14 +284,44 @@ describe("asset-manager", () => {
   });
 
   it("should handle DepositRevert message correctly", () => {
+    const token = Cl.contractPrincipal(deployer!, "sbtc");
+    const amount = 1000;
+    const withdrawalAmount = 899;
+    const newPeriod = 10000;
+    const newPercentage = 9000;
+    const allowedWithdrawal = ((amount * newPercentage) / 10000) - 1;
+
+    expect(withdrawalAmount).toBeLessThanOrEqual(allowedWithdrawal);
+    
     const message = [
       'DepositRevert',
       'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.sbtc',
-      1000,
+      withdrawalAmount,
       'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM',
     ];
 
     const encodedData = Uint8Array.from(encode(message));
+
+    simnet.callPublicFn(
+      token.contractName.content,
+      "mint",
+      [Cl.uint(amount), Cl.address(user)],
+      deployer!
+    );
+
+    simnet.callPublicFn(
+      assetManager.contractName.content,
+      "deposit",
+      [token, Cl.uint(amount)],
+      user
+    );
+
+    simnet.callPublicFn(
+      assetManager.contractName.content,
+      "configure-rate-limit",
+      [token, Cl.uint(newPeriod), Cl.uint(newPercentage)],
+      deployer!
+    );
 
     const { result } = simnet.callPublicFn(
       assetManager.contractName.content,

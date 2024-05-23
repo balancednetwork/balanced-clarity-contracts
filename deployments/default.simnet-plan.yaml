@@ -80,6 +80,11 @@ plan:
             path: contracts/mocks/sbtc.clar
             clarity-version: 2
         - emulated-contract-publish:
+            contract-name: util
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/util.clar
+            clarity-version: 2
+        - emulated-contract-publish:
             contract-name: asset-manager
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
             path: contracts/asset-manager/asset-manager.clar
@@ -103,11 +108,6 @@ plan:
             contract-name: token
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
             path: contracts/mocks/token.clar
-            clarity-version: 2
-        - emulated-contract-publish:
-            contract-name: util
-            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            path: contracts/util.clar
             clarity-version: 2
         - emulated-contract-publish:
             contract-name: xcall-manager
