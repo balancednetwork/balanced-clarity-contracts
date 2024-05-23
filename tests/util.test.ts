@@ -69,7 +69,7 @@ describe("address-string-to-principal", () => {
 
   it("should return an error for an empty address string", () => {
     const address = "";
-    const { result } = simnet.callReadOnlyFn(
+    const { result } = simnet.callPublicFn(
       util.contractName.content,
       "address-string-to-principal",
       [Cl.stringAscii(address)],
