@@ -23,7 +23,7 @@ jobs:
       - run: npm ci
       - run: |
           npm run test:report
-          apt-get install lcov
+          sudo apt-get install lcov
           genhtml --branch-coverage -o coverage lcov.info
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4.0.1
